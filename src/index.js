@@ -15,7 +15,6 @@ const io = socketio(server);
 const publicPathDirectory = path.join(__dirname, '../public');
 app.use(express.static(publicPathDirectory));
 io.on('connection', (socket) => {
-    console.log("new WebSocket Connection");
 
     socket.on('join', ({ username, room }, callback) => {
         const { user, error } = addUser({ id: socket.id, username, room })
