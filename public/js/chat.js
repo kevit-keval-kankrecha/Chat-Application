@@ -64,7 +64,6 @@ socket.on('roomData', ({ room, users }) => {
 
 })
 
-
 //send location
 socket.on('messageLocation', (locationURL) => {
     const html = Mustache.render(locationMessageTemplate, {
