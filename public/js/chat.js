@@ -17,32 +17,32 @@ const sidebarTemplate = document.getElementById('sidebar-template').innerHTML;
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
 
-const autoScrolling=()=>{
+const autoScrolling = () => {
     //new message element
     const $newMessage = $messages.lastElementChild
 
     //Height of the new message
     const newMessagesStyles = getComputedStyle($newMessage)
     const newMessagesMargin = parseInt(newMessagesStyles.marginBottom)
-    const newMessagesHeight = $newMessage.offsetHeight+newMessagesMargin
+    const newMessagesHeight = $newMessage.offsetHeight + newMessagesMargin
 
     //Visible height
     const visibleHeight = $messages.offsetHeight
 
     //Height of messages container
     const containerHeight = $messages.scrollHeight
-    
-    //How far have I scrolled?
-    const scrollOffset = $messages.scrollTop+visibleHeight
 
-    if(containerHeight-newMessagesHeight<=scrollOffset){
-        $messages.scrollTop=$messages.scrollHeight
+    //How far have I scrolled?
+    const scrollOffset = $messages.scrollTop + visibleHeight
+
+    if (containerHeight - newMessagesHeight <= scrollOffset) {
+        $messages.scrollTop = $messages.scrollHeight
     }
 }
 //server send message
 socket.on('message', (message) => {
     const html = Mustache.render(messageTemplate, {
-        username:message.username,
+        username: message.username,
         message: message.text,
         createdAt: moment(message.createdAt).format('LTS')
     });
@@ -52,15 +52,15 @@ socket.on('message', (message) => {
 
 
 //list actives users
-socket.on('roomData',({room,users})=>{
+socket.on('roomData', ({ room, users }) => {
 
-    const html=Mustache.render(sidebarTemplate,{
+    const html = Mustache.render(sidebarTemplate, {
         room,
         users
     });
 
 
-    document.getElementById('sidebar').innerHTML=html
+    document.getElementById('sidebar').innerHTML = html
 
 })
 
@@ -68,6 +68,7 @@ socket.on('roomData',({room,users})=>{
 //send location
 socket.on('messageLocation', (locationURL) => {
     const html = Mustache.render(locationMessageTemplate, {
+        username:locationURL.username,
         locationMessage: locationURL.url,
         createdAt: moment(locationURL.createdAt).format('LTS')
     });
@@ -117,5 +118,5 @@ document.getElementById('location').addEventListener('click', () => {
 //when user join chat room
 socket.emit('join', { username, room }, (error) => {
     alert(error);
-    location.href='/'
+    location.href = '/'
 });
