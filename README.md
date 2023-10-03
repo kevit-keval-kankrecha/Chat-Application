@@ -1,7 +1,7 @@
 
 # Chat-Application
 
-This is real time chat application many users can chat with each other within a specific Room.
+This is real time chat application, users can chat with each other within a specific Room.
 
 
 ## Technology
