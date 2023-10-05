@@ -39,15 +39,17 @@ io.on('connection', (socket) => {
     socket.on('sendMessage', (message, callback) => {
         //socket.broadcast.emit('message',message);
 
+        //get user by their id
+        const user = getUser(socket.id)
+
         //checking for message contains any bad words
         let filter = new Filter();
         if (filter.isProfane(message)) {
-            logger.warn("Sorry Message contains profanity");
+            logger.warn(`${user.username} abuse in Room :- ${user.room}`);
             return callback('Sorry Message contains profanity');
         }
 
-        //get user by their id
-        const user = getUser(socket.id)
+        
 
         io.to(user.room).emit('message', generateMessage(user.username, message));
         callback('Delivered');
