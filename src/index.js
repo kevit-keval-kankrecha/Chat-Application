@@ -50,7 +50,6 @@ io.on('connection', (socket) => {
             return callback('Sorry Message contains profanity');
         }
 
-        logger.info(`${user.username} :-> ${message}`);
 
         io.to(user.room).emit('message', generateMessage(user.username, message));
         callback('Delivered');
@@ -59,7 +58,7 @@ io.on('connection', (socket) => {
     //receive location from clients nd share to other clients
     socket.on('sendLocation', (location, callback) => {
         const user = getUser(socket.id);
-        logger.info(`${user.username} is now 'https://www.google.com/maps?q=${location.latitude},${location.longitude}'`)
+        logger.info(`${user.username} has shared Location.`)
         io.to(user.room).emit('messageLocation', generateLocationMessage(user.username, `https://www.google.com/maps?q=${location.latitude},${location.longitude}`));
         callback('Location Shared');
     });
