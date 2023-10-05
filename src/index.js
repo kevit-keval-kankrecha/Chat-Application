@@ -6,6 +6,7 @@ const logger = require('../loggers/index');
 const Filter = require('bad-words');
 const { generateMessage, generateLocationMessage } = require('./utils/messages');
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users');
+const { log } = require('console');
 
 const port = 3000 || process.env.PORT;
 app = express()
@@ -19,7 +20,7 @@ io.on('connection', (socket) => {
 
     socket.on('join', ({ username, room }, callback) => {
         const { user, error } = addUser({ id: socket.id, username, room })
-
+        logger.info(`${user.username} is joined to chat Room ${user.room}`);
         if (error) {
             return callback(error);
         }
@@ -45,11 +46,11 @@ io.on('connection', (socket) => {
         //checking for message contains any bad words
         let filter = new Filter();
         if (filter.isProfane(message)) {
-            logger.warn(`${user.username} abuse in Room :- ${user.room}`);
+            logger.warn(`${user.username} just abuse in Room :- ${user.room}`);
             return callback('Sorry Message contains profanity');
         }
 
-        
+        logger.info(`${user.username} :-> ${message}`);
 
         io.to(user.room).emit('message', generateMessage(user.username, message));
         callback('Delivered');
@@ -58,6 +59,7 @@ io.on('connection', (socket) => {
     //receive location from clients nd share to other clients
     socket.on('sendLocation', (location, callback) => {
         const user = getUser(socket.id);
+        logger.info(`${user.username} is now 'https://www.google.com/maps?q=${location.latitude},${location.longitude}'`)
         io.to(user.room).emit('messageLocation', generateLocationMessage(user.username, `https://www.google.com/maps?q=${location.latitude},${location.longitude}`));
         callback('Location Shared');
     });
@@ -65,14 +67,16 @@ io.on('connection', (socket) => {
     //when user disconnect
     socket.on('disconnect', () => {
         const user = removeUser(socket.id);
+        logger.info(`${user.username} has left the chat Room ${user.room}`);
         if (user) {
             io.to(user.room).emit('message', generateMessage('Admin', `${user.username} is left!`));
+
             io.to(user.room).emit('roomData', {
                 room: user.room,
                 users: getUsersInRoom(user.room)
             })
         }
-    });
+    });``
 });
 
 
