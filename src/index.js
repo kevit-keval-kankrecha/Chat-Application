@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const socketio = require('socket.io');
+const logger = require('../loggers/index');
 const Filter = require('bad-words');
 const { generateMessage, generateLocationMessage } = require('./utils/messages');
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users');
@@ -41,6 +42,7 @@ io.on('connection', (socket) => {
         //checking for message contains any bad words
         let filter = new Filter();
         if (filter.isProfane(message)) {
+            logger.warn("Sorry Message contains profanity");
             return callback('Sorry Message contains profanity');
         }
 
